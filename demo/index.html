@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>vue-audio-recorder | demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app">
+      <audio-recorder
+        upload-url="some url"
+        :attempts="3"
+        :time="2"
+        :start-record="callback"
+        :stop-record="callback"
+        :start-upload="callback"
+        :successful-upload="callback"
+        :failed-upload="callback"/>
+    </div>
+  </body>
+</html>
