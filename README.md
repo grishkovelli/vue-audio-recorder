@@ -14,6 +14,12 @@
 - Records limit
 - A lot of callbacks
 
+### Tested in
+
+- Chrome
+- Firefox
+- Safari
+
 ## Installation
 
 ```
