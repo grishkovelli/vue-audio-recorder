@@ -145,6 +145,8 @@
       }
     }
   }
+
+  @import '../scss/icons';
 </style>
 
 <template>
@@ -160,15 +162,15 @@
     <div class="ar-content" :class="{'ar__blur': isUploading}">
       <div class="ar-recorder">
         <icon-button
-          size="lg"
+          class="ar-icon ar-icon__lg"
           :name="iconButtonType"
           :class="{
-            'ar-icon-button--rec': isRecording,
-            'ar-icon-button--pulse': isRecording && volume > 0.02
+            'ar-icon--rec': isRecording,
+            'ar-icon--pulse': isRecording && volume > 0.02
           }"
           @click.native="toggleRecorder"/>
         <icon-button
-          class="ar-recorder__stop"
+          class="ar-icon ar-icon__sm ar-recorder__stop"
           name="stop"
           @click.native="stopRecorder"/>
       </div>
@@ -188,14 +190,15 @@
         </div>
       </div>
 
-      <record-player
+      <audio-player
+        :compact="compact"
         :record="selectedRecord"
         :upload-url="uploadUrl"
         :start-upload="startUpload"
         :successful-upload="successfulUpload"
         :failed-upload="failedUpload"
-        @on-start-upload="onStartUpload"
-        @on-end-upload="onEndUpload"/>
+        @start-upload="onStartUpload"
+        @end-upload="onEndUpload"/>
 
       <div :class="uploadStatusClasses" v-if="uploadStatus">{{message}}</div>
     </div>
@@ -203,27 +206,28 @@
 </template>
 
 <script>
-  import IconButton           from './components/icon-button.vue'
-  import Recorder             from './lib/recorder.js'
-  import RecordPlayer         from './components/record-player.vue'
-  import { convertTimeMMSS }  from './lib/utils.js'
+  import AudioPlayer          from './player.vue'
+  import IconButton           from './icon-button.vue'
+  import Recorder             from '@/lib/recorder.js'
+  import { convertTimeMMSS }  from '@/lib/utils.js'
 
   export default {
     props: {
-      attempts:   { type: Number },
-      time:       { type: Number },
-      uploadUrl:  { type: String },
+      attempts  : { type: Number                  },
+      compact   : { type: Boolean, default: false },
+      time      : { type: Number                  },
+      uploadUrl : { type: String                  },
 
-      attemptsLimit:    { type: Function },
-      failedUpload:     { type: Function },
-      micFailed:        { type: Function },
-      startRecord:      { type: Function },
-      startUpload:      { type: Function },
-      stopRecord:       { type: Function },
-      successfulUpload: { type: Function },
+      attemptsLimit    : { type: Function },
+      failedUpload     : { type: Function },
+      micFailed        : { type: Function },
+      startRecord      : { type: Function },
+      startUpload      : { type: Function },
+      stopRecord       : { type: Function },
+      successfulUpload : { type: Function },
 
-      successfulUploadMsg:  { type: String, default: 'Upload successful' },
-      failedUploadMsg:      { type: String, default: 'Upload fail' }
+      successfulUploadMsg : { type: String, default: 'Upload successful' },
+      failedUploadMsg     : { type: String, default: 'Upload fail'       }
     },
     data () {
       return {
@@ -245,8 +249,8 @@
       }
     },
     components: {
-      IconButton,
-      RecordPlayer
+      AudioPlayer,
+      IconButton
     },
     methods: {
       toggleRecorder () {

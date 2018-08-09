@@ -1,0 +1,45 @@
+.ar-icon {
+  fill: #747474;
+  border-radius: 50%;
+  border: 1px solid #05CBCD;
+  background-color: #FFFFFF;
+  padding: 5px;
+  cursor: pointer;
+  transition: .2s;
+
+  &--rec {
+    fill: white;
+    background-color: #FF6B64;
+    border-color: transparent;
+  }
+
+  &--pulse {
+    animation: ripple .5s linear infinite;
+
+    @keyframes ripple {
+      0% {
+        box-shadow:
+          0 0 0 0 rgba(red, 0.1),
+          0 0 0 1px rgba(red, 0.1),
+          0 0 0 5px rgba(red, 0.1);
+      }
+      100% {
+        box-shadow:
+          0 0 0 0 rgba(red, 0.1),
+          0 0 0 10px rgba(red, 0.1),
+          0 0 0 20px rgba(red, 0);
+      }
+    }
+  }
+
+  &__sm {
+    width: 30px;
+    height: 30px;
+  }
+
+  &__lg {
+    width: 45px;
+    height: 45px;
+    box-shadow: 0 2px 5px 1px rgba(158,158,158,0.5);
+  }
+}

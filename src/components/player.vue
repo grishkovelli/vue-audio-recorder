@@ -1,14 +1,23 @@
 <style lang="scss">
   .ar-player {
-    width: 100%;
+    width: 380px;
     height: 120px;
     border: 1px solid #E8E8E8;
     border-radius: 24px;
-    background-color: #FAFAFA;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: center;
     justify-content: center;
+    background-color: #FAFAFA;
+    font-family: 'Roboto', sans-serif;
+
+    &-bar {
+      display: flex;
+      align-items: center;
+      height: 38px;
+      padding: 0 12px;
+      margin: 0 5px;
+    }
 
     &-actions {
       width: 55%;
@@ -17,46 +26,35 @@
       justify-content: space-around;
     }
 
-    &-volume {
-      display: flex;
-      align-items: center;
-      line-height: 10px;
+    &--compact {
+      height: unset;
+      flex-direction: row;
+      border: 0;
+      border-radius: 0;
+      background-color: unset;
 
-      &-bar {
-        width: 50px;
-        height: 8px;
-        background: #E6E6E6;
-        border-radius: 4px;
-        position: relative;
+      & > .ar-player-actions {
+        width: unset;
+
+        & > #download,
+        & > #upload {
+          display: none;
+        }
       }
 
-      &__icon {
-        fill: #747474;
-        width: 24px;
-        height: 24px;
-        border: 0;
-        border-radius: 0;
-        padding: 0;
-        background-color: unset;
-        margin-right: 3px;
+      & > .ar-player-bar {
+        border: 1px solid #E8E8E8;
+        border-radius: 24px;
+        margin: 0 0 0 5px;
+
+        & > .ar-player__progress {
+          width: 125px;
+        }
       }
-    }
-
-    &-bar {
-      display: flex;
-      align-items: center;
-      margin-bottom: 2px;
-    }
-
-    &--active {
-      background-color: white;
     }
 
     &__progress {
       width: 160px;
-      height: 8px;
-      border-radius: 5px;
-      background-color: #E6E6E6;
       margin: 0 8px;
     }
 
@@ -65,75 +63,93 @@
       font-size: 16px;
       width: 41px;
     }
+
+    &__play {
+      width: 45px;
+      height: 45px;
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 11px 11px rgba(0,0,0,0.07);
+
+      &--active {
+        fill: white !important;
+        background-color: #05CBCD !important;
+      }
+    }
   }
+
+  @import '../scss/icons';
 </style>
 
 <template>
-  <div class="ar-player" :class="{'ar-player--active': record.url}">
+  <div class="ar-player" :class="{'ar-player--compact': compact}">
+
+    <div class="ar-player-actions">
+      <icon-button
+        id="download"
+        class="ar-icon ar-icon__sm"
+        name="download"
+        @click.native="download"/>
+
+      <icon-button
+        id="play"
+        class="ar-icon ar-icon__lg ar-player__play"
+        :name="playBtnIcon"
+        :class="{'ar-player__play--active': isPlaying}"
+        @click.native="playback"/>
+
+      <icon-button
+        id="upload"
+        class="ar-icon ar-icon__sm"
+        name="save"
+        @click.native="upload"/>
+    </div>
+
     <div class="ar-player-bar">
-
       <div class="ar-player__time">{{playedTime}}</div>
-
       <line-control
         class="ar-player__progress"
         ref-id="progress"
         :percentage="progress"
-        @changeLineHead="_onUpdateProgress"/>
-
+        @change-linehead="_onUpdateProgress"/>
       <div class="ar-player__time">{{duration}}</div>
-
-      <div class="ar-player-volume">
-        <icon-button class="ar-player-volume__icon" name="volume"/>
-        <line-control
-          class="ar-player-volume-bar"
-          ref-id="volume"
-          :percentage="volume"
-          @changeLineHead="_onUpdateVolume"/>
-      </div>
+      <volume-control @change-volume="_onChangeVolume"/>
     </div>
 
-    <div class="ar-player-actions">
-      <icon-button name="download" @click.native="download"/>
-      <icon-button
-        size="lg"
-        :name="playBtnIcon"
-        :class="{'ar-icon-button--clicked': isPlaying}"
-        @click.native="playback"/>
-      <icon-button name="save" @click.native="upload"/>
-    </div>
-
-    <audio id="audio-recorder-player" :src="record.url"></audio>
+    <audio :id="playerUniqId" :src="audioSource"></audio>
   </div>
 </template>
 
 <script>
-  import IconButton from './icon-button.vue'
-  import LineControl from './line-control.vue'
-  import { convertTimeMMSS } from '../lib/utils.js'
+  import IconButton from './icon-button'
+  import LineControl from './line-control'
+  import VolumeControl from './volume-control'
+  import { convertTimeMMSS } from '@/lib/utils.js'
 
   export default {
     props: {
-      uploadUrl:        { type: String   },
-      record:           { type: Object   },
-      startUpload:      { type: Function },
-      successfulUpload: { type: Function },
-      failedUpload:     { type: Function }
+      src              : { type: String                  },
+      uploadUrl        : { type: String                  },
+      record           : { type: Object                  },
+      compact          : { type: Boolean, default: true  },
+      startUpload      : { type: Function                },
+      successfulUpload : { type: Function                },
+      failedUpload     : { type: Function                }
     },
     data () {
       return {
         isPlaying: false,
         duration: convertTimeMMSS(0),
         playedTime: convertTimeMMSS(0),
-        progress: 0,
-        volume: 0.8
+        progress: 0
       }
     },
     components: {
       IconButton,
-      LineControl
+      LineControl,
+      VolumeControl
     },
     mounted: function() {
-      this.player = document.getElementById('audio-recorder-player')
+      this.player = document.getElementById(this.playerUniqId)
 
       this.player.addEventListener('ended', () => {
         this.isPlaying = false
@@ -149,11 +165,17 @@
     computed: {
       playBtnIcon () {
         return this.isPlaying ? 'pause' : 'play'
+      },
+      audioSource () {
+        return this.src || this.record.url
+      },
+      playerUniqId () {
+        return `audio-player${this._uid}`
       }
     },
     methods: {
       playback () {
-        if (!this.record.url) {
+        if (!this.audioSource) {
           return
         }
 
@@ -166,7 +188,7 @@
         this.isPlaying = !this.isPlaying
       },
       upload () {
-        if (!this.record.url) {
+        if (!this.audioSource) {
           return
         }
 
@@ -194,7 +216,7 @@
         })
       },
       download () {
-        if (!this.record.url) {
+        if (!this.audioSource) {
           return
         }
 
@@ -216,10 +238,9 @@
           this.player.currentTime = pos * this.player.duration
         }
       },
-      _onUpdateVolume (val) {
+      _onChangeVolume (val) {
         if (val) {
           this.player.volume = val
-          this.volume = val
         }
       }
     }
