@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const env = `./webpack.${process.env.NODE_ENV === 'production' ? 'prod' : 'dev'}.js`
+const path = require('path')
 
 module.exports = merge(require(env), {
   module: {
@@ -42,7 +43,8 @@ module.exports = merge(require(env), {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': path.resolve(__dirname, 'src')
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
