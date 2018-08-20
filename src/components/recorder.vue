@@ -183,6 +183,7 @@
         <div
           class="ar-records__record"
           :class="{'ar-records__record--selected': idx === selectedRecord.idx}"
+          :key="idx"
           v-for="(record, idx) in recordList"
           @click="selectRecord(idx, record)">
             <div class="ar__text">Record {{idx + 1}}</div>
