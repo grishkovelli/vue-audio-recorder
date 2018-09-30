@@ -23,7 +23,7 @@ export default class {
     navigator.mediaDevices.getUserMedia({audio: true})
                           .then(this._micCaptured.bind(this))
                           .catch(this._micError.bind(this))
-    this.isPause = false
+    this.isPause     = false
     this.isRecording = true
   }
 
@@ -34,26 +34,28 @@ export default class {
     this.context.close()
 
     let encoder = new WavEncoder({
-      bufferSize: this.bufferSize,
-      sampleRate: this.context.sampleRate,
-      samples: this.samples
+      bufferSize : this.bufferSize,
+      sampleRate : this.context.sampleRate,
+      samples    : this.samples
     })
 
     let audioBlob = encoder.getData()
-    let audioUrl = URL.createObjectURL(audioBlob)
+    let audioUrl  = URL.createObjectURL(audioBlob)
 
     this.samples = []
 
     this.records.push({
-      blob: audioBlob,
-      url: audioUrl,
-      duration: convertTimeMMSS(this.duration)
+      id       : Date.now(),
+      blob     : audioBlob,
+      duration : convertTimeMMSS(this.duration),
+      url      : audioUrl
     })
 
-    this.isPause = false
-    this.isRecording = false
     this._duration = 0
-    this.duration = 0
+    this.duration  = 0
+
+    this.isPause     = false
+    this.isRecording = false
 
     if (this.afterStop) {
       this.afterStop()
@@ -79,11 +81,11 @@ export default class {
   }
 
   _micCaptured (stream) {
-    this.context = new(window.AudioContext || window.webkitAudioContext)()
-    this.input = this.context.createMediaStreamSource(stream)
-    this.processor = this.context.createScriptProcessor(this.bufferSize, 1, 1)
-    this.duration = this._duration
-    this.stream = stream
+    this.context    = new(window.AudioContext || window.webkitAudioContext)()
+    this.duration   = this._duration
+    this.input      = this.context.createMediaStreamSource(stream)
+    this.processor  = this.context.createScriptProcessor(this.bufferSize, 1, 1)
+    this.stream     = stream
 
     this.processor.onaudioprocess = (ev) => {
       let sample = ev.inputBuffer.getChannelData(0)
