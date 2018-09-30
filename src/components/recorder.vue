@@ -23,12 +23,14 @@
 
       &__record {
         width: 320px;
+        height: 45px;
         padding: 0 10px;
         margin: 0 auto;
         line-height: 45px;
         display: flex;
         justify-content: space-between;
         border-bottom: 1px solid #E8E8E8;
+        position: relative;
 
         &--selected {
           border: 1px solid #E8E8E8;
@@ -105,7 +107,7 @@
 
         @keyframes blink {
           0%    { opacity: .2; }
-          20%   { opacity: 1; }
+          20%   { opacity: 1;  }
           100%  { opacity: .2; }
         }
       }
@@ -143,6 +145,20 @@
       &--fail {
         color: red;
       }
+    }
+
+    &__rm {
+      cursor: pointer;
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      padding: 6px;
+      line-height: 6px;
+      margin: auto;
+      left: 10px;
+      bottom: 0;
+      top: 0;
+      color: rgb(244, 120, 90);
     }
   }
 
@@ -182,10 +198,14 @@
       <div class="ar-records">
         <div
           class="ar-records__record"
-          :class="{'ar-records__record--selected': idx === selectedRecord.idx}"
-          :key="idx"
+          :class="{'ar-records__record--selected': record.id === selected.id}"
+          :key="record.id"
           v-for="(record, idx) in recordList"
-          @click="selectRecord(idx, record)">
+          @click="selected = record">
+            <div
+              class="ar__rm"
+              v-if="record.id === selected.id"
+              @click="removeRecord(idx)">&times;</div>
             <div class="ar__text">Record {{idx + 1}}</div>
             <div class="ar__text">{{record.duration}}</div>
         </div>
@@ -193,7 +213,7 @@
 
       <audio-player
         :compact="compact"
-        :record="selectedRecord"
+        :record="selected"
         :upload-url="uploadUrl"
         :start-upload="startUpload"
         :successful-upload="successfulUpload"
@@ -245,7 +265,7 @@
           time: this.time
         }),
         recordList: [],
-        selectedRecord: {},
+        selected: {},
         uploadStatus: null
       }
     },
@@ -278,8 +298,9 @@
 
         this.recorder.stop()
       },
-      selectRecord (idx, record) {
-        this.selectedRecord = { idx: idx, url: record.url, blob: record.blob }
+      removeRecord (idx) {
+        this.recordList.splice(idx, 1)
+        this.$set(this.selected, 'url', null)
       },
       onStartUpload () {
         this.isUploading = true
