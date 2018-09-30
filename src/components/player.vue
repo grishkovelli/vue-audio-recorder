@@ -88,20 +88,20 @@
         id="download"
         class="ar-icon ar-icon__sm"
         name="download"
-        @click.native="download"/>
+        @click.native="decorator(download)"/>
 
       <icon-button
         id="play"
         class="ar-icon ar-icon__lg ar-player__play"
         :name="playBtnIcon"
         :class="{'ar-player__play--active': isPlaying}"
-        @click.native="playback"/>
+        @click.native="decorator(playback)"/>
 
       <icon-button
         id="upload"
         class="ar-icon ar-icon__sm"
         name="save"
-        @click.native="upload"/>
+        @click.native="decorator(upload)"/>
     </div>
 
     <div class="ar-player-bar">
@@ -163,11 +163,16 @@
       this.player.addEventListener('timeupdate', this._onTimeUpdate)
     },
     computed: {
+      audioSource () {
+        let url = this.src || this.record.url
+        if (url) {
+          return url
+        } else {
+          this._resetProgress()
+        }
+      },
       playBtnIcon () {
         return this.isPlaying ? 'pause' : 'play'
-      },
-      audioSource () {
-        return this.src || this.record.url
       },
       playerUniqId () {
         return `audio-player${this._uid}`
@@ -175,10 +180,6 @@
     },
     methods: {
       playback () {
-        if (!this.audioSource) {
-          return
-        }
-
         if (this.isPlaying) {
           this.player.pause()
         } else {
@@ -188,10 +189,6 @@
         this.isPlaying = !this.isPlaying
       },
       upload () {
-        if (!this.audioSource) {
-          return
-        }
-
         if (this.startUpload) {
           this.startUpload()
         }
@@ -216,18 +213,27 @@
         })
       },
       download () {
-        if (!this.audioSource) {
-          return
-        }
-
         let link = document.createElement('a')
         link.href = this.record.url
         link.download = 'record.wav'
         link.click()
       },
+      decorator (func) {
+        if (!this.audioSource) {
+          return
+        }
+        func()
+      },
       _resetProgress () {
-        this.isPlaying = false
-        this.progress = 0
+        if (this.isPlaying) {
+          this.player.pause()
+        }
+        setTimeout(() => {
+          this.duration   = convertTimeMMSS(0)
+          this.playedTime = convertTimeMMSS(0)
+          this.progress   = 0
+          this.isPlaying  = false
+        }, 0)
       },
       _onTimeUpdate () {
         this.playedTime = convertTimeMMSS(this.player.currentTime)
