@@ -97,11 +97,11 @@
         :class="{'ar-player__play--active': isPlaying}"
         @click.native="decorator(playback)"/>
 
-      <icon-button
+      <uploader
         id="upload"
         class="ar-icon ar-icon__sm"
-        name="save"
-        @click.native="decorator(upload)"/>
+        :record="record"
+        :options="uploaderOptions"/>
     </div>
 
     <div class="ar-player-bar">
@@ -120,32 +120,31 @@
 </template>
 
 <script>
-  import IconButton from './icon-button'
-  import LineControl from './line-control'
+  import IconButton    from './icon-button'
+  import LineControl   from './line-control'
+  import Uploader      from './uploader'
   import VolumeControl from './volume-control'
-  import { convertTimeMMSS } from '@/lib/utils.js'
+  import { convertTimeMMSS } from '@/lib/utils'
 
   export default {
     props: {
-      src              : { type: String                  },
-      uploadUrl        : { type: String                  },
-      record           : { type: Object                  },
-      compact          : { type: Boolean, default: true  },
-      startUpload      : { type: Function                },
-      successfulUpload : { type: Function                },
-      failedUpload     : { type: Function                }
+      src     : { type: String },
+      record  : { type: Object },
+      compact : { type: Boolean, default: true },
+      uploaderOptions : { type: Object, default: () => new Object }
     },
     data () {
       return {
-        isPlaying: false,
-        duration: convertTimeMMSS(0),
-        playedTime: convertTimeMMSS(0),
-        progress: 0
+        isPlaying  : false,
+        duration   : convertTimeMMSS(0),
+        playedTime : convertTimeMMSS(0),
+        progress   : 0
       }
     },
     components: {
       IconButton,
       LineControl,
+      Uploader,
       VolumeControl
     },
     mounted: function() {
@@ -161,6 +160,10 @@
       })
 
       this.player.addEventListener('timeupdate', this._onTimeUpdate)
+
+      this.$eventBus.$on('remove-record', () => {
+        this._resetProgress()
+      })
     },
     computed: {
       audioSource () {
@@ -188,30 +191,6 @@
 
         this.isPlaying = !this.isPlaying
       },
-      upload () {
-        if (this.startUpload) {
-          this.startUpload()
-        }
-
-        this.$emit('on-start-upload')
-
-        let data = new FormData()
-        data.append('audio', this.record.blob, 'my-record')
-
-        this.$http.post(this.uploadUrl, data, {
-          headers: {'Content-Type': `multipart/form-data; boundary=${data._boundary}`}
-        }).then(resp => {
-          this.$emit('on-end-upload', 'success')
-          if (this.successfulUpload) {
-            this.successfulUpload(resp)
-          }
-        }).catch(error => {
-          this.$emit('on-end-upload', 'fail')
-          if (this.failedUpload) {
-            this.failedUpload(error)
-          }
-        })
-      },
       download () {
         let link = document.createElement('a')
         link.href = this.record.url
@@ -228,12 +207,11 @@
         if (this.isPlaying) {
           this.player.pause()
         }
-        setTimeout(() => {
-          this.duration   = convertTimeMMSS(0)
-          this.playedTime = convertTimeMMSS(0)
-          this.progress   = 0
-          this.isPlaying  = false
-        }, 0)
+
+        this.duration   = convertTimeMMSS(0)
+        this.playedTime = convertTimeMMSS(0)
+        this.progress   = 0
+        this.isPlaying  = false
       },
       _onTimeUpdate () {
         this.playedTime = convertTimeMMSS(this.player.currentTime)

@@ -211,15 +211,7 @@
         </div>
       </div>
 
-      <audio-player
-        :compact="compact"
-        :record="selected"
-        :upload-url="uploadUrl"
-        :start-upload="startUpload"
-        :successful-upload="successfulUpload"
-        :failed-upload="failedUpload"
-        @start-upload="onStartUpload"
-        @end-upload="onEndUpload"/>
+      <audio-player :compact="compact" :record="selected" :uploader-options="uploaderOptions"/>
 
       <div :class="uploadStatusClasses" v-if="uploadStatus">{{message}}</div>
     </div>
@@ -227,51 +219,75 @@
 </template>
 
 <script>
-  import AudioPlayer          from './player.vue'
-  import IconButton           from './icon-button.vue'
-  import Recorder             from '@/lib/recorder.js'
-  import { convertTimeMMSS }  from '@/lib/utils.js'
+  import AudioPlayer from './player'
+  import IconButton  from './icon-button'
+  import Recorder    from '@/lib/recorder'
+  import { convertTimeMMSS }  from '@/lib/utils'
 
   export default {
     props: {
-      attempts  : { type: Number                  },
-      compact   : { type: Boolean, default: false },
-      time      : { type: Number                  },
-      uploadUrl : { type: String                  },
+      attempts : { type: Number                  },
+      compact  : { type: Boolean, default: false },
+      time     : { type: Number                  },
 
-      attemptsLimit    : { type: Function },
+      attemptsLimit : { type: Function },
+      micFailed     : { type: Function },
+      startRecord   : { type: Function },
+      stopRecord    : { type: Function },
+
       failedUpload     : { type: Function },
-      micFailed        : { type: Function },
-      startRecord      : { type: Function },
+      headers          : { type: Object   },
       startUpload      : { type: Function },
-      stopRecord       : { type: Function },
       successfulUpload : { type: Function },
+      uploadUrl        : { type: String   },
 
       successfulUploadMsg : { type: String, default: 'Upload successful' },
       failedUploadMsg     : { type: String, default: 'Upload fail'       }
     },
     data () {
       return {
-        isUploading: false,
-        recorder: new Recorder({
-          afterStop: () => {
-            this.recordList = this.recorder.recordList()
-
-            if (this.stopRecord) {
-              this.stopRecord('stop record')
-            }
-          },
-          attempts: this.attempts,
-          time: this.time
-        }),
-        recordList: [],
-        selected: {},
-        uploadStatus: null
+        isUploading : false,
+        recorder    : new Recorder({
+                        afterStop: () => {
+                          this.recordList = this.recorder.recordList()
+                          if (this.stopRecord) {
+                            this.stopRecord('stop record')
+                          }
+                        },
+                        attempts: this.attempts,
+                        time: this.time
+                      }),
+        recordList      : [],
+        selected        : {},
+        uploadStatus    : null,
+        uploaderOptions : {}
       }
     },
     components: {
       AudioPlayer,
       IconButton
+    },
+    created () {
+      this.uploaderOptions = {
+        failedUpload     : this.failedUpload,
+        headers          : this.headers,
+        startUpload      : this.startUpload,
+        successfulUpload : this.successfulUpload,
+        uploadUrl        : this.uploadUrl
+      }
+
+      this.$eventBus.$on('start-upload', () => {
+        this.isUploading = true
+      })
+
+      this.$eventBus.$on('end-upload', (resp) => {
+        this.isUploading = false
+        this.uploadStatus = status
+        setTimeout(() => {this.uploadStatus = null}, 1500)
+      })
+    },
+    beforeDestroy () {
+      this.stopRecorder()
     },
     methods: {
       toggleRecorder () {
@@ -301,14 +317,7 @@
       removeRecord (idx) {
         this.recordList.splice(idx, 1)
         this.$set(this.selected, 'url', null)
-      },
-      onStartUpload () {
-        this.isUploading = true
-      },
-      onEndUpload (status) {
-        this.isUploading = false
-        this.uploadStatus = status
-        setTimeout(() => {this.uploadStatus = null}, 1500)
+        this.$eventBus.$emit('remove-record')
       }
     },
     computed: {

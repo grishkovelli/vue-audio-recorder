@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import { calculateLineHeadPosition } from '@/lib/utils.js'
+  import { calculateLineHeadPosition } from '@/lib/utils'
 
   export default {
     props: {

@@ -37,8 +37,8 @@
 </template>
 
 <script>
-  import IconButton from './icon-button.vue'
-  import LineControl from './line-control.vue'
+  import IconButton  from './icon-button'
+  import LineControl from './line-control'
 
   export default {
     data () {

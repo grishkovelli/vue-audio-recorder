@@ -13,6 +13,7 @@
       upload-url="some url"
       :attempts="3"
       :time="2"
+      :headers="headers"
       :start-record="callback"
       :stop-record="callback"
       :start-upload="callback"
@@ -24,19 +25,15 @@
 </template>
 
 <script>
-  import AudioPlayer from '../src/components/player'
-  import AudioRecorder from '../src/components/recorder'
-
   export default {
     name: 'app',
-    components: {
-      AudioPlayer,
-      AudioRecorder
-    },
     data () {
       return {
         mp3: '/demo/example.mp3',
-        showRecorder: true
+        showRecorder: true,
+        headers: {
+          'X-Custom-Header': 'some data'
+        }
       }
     },
     methods: {
