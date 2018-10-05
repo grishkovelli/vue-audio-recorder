@@ -15,7 +15,7 @@
 - A lot of callbacks
 - Individual an audio player
 
-### Tested in
+### Tested in (desktop)
 
 - Chrome
 - Firefox
@@ -33,6 +33,7 @@ npm i vue-audio-recorder --save
 | --------------------- | -------- | --------------------------------------------------------------- |
 | attempts              | Number   | Number of recording attempts                                    |
 | compact               | Boolean  | Hide the download and upload buttons                            |
+| headers               | Object   | HTTP headers                                                    |
 | time                  | Number   | Time limit for the record (minutes)                             |
 | upload-url            | String   | URL for uploading                                               |
 | start-record          | Function | Fires after click the record button                             |
@@ -52,17 +53,6 @@ npm i vue-audio-recorder --save
 
 ## Usage
 
-The most common use case is to register the component globally
-
-```js
-    import {AudioRecorder, AudioPlayer} from 'vue-audio-recorder'
-
-    Vue.component(AudioPlayer)
-    Vue.component(AudioRecorder)
-```
-
-Alternatively you can do this to register the components
-
 ```js
     import AudioRecorder from 'vue-audio-recorder'
 
@@ -73,6 +63,7 @@ Alternatively you can do this to register the components
   <audio-recorder
     upload-url="YOUR_API_URL"
     :attempts="3"
+    :headers="headers"
     :time="2"
     :start-record="callback"
     :stop-record="callback"
