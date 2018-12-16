@@ -35,7 +35,7 @@
     },
     methods: {
       onMouseDown (ev) {
-        let seekPos = calculateLineHeadPosition(ev, this.$refs[this.refId])
+        const seekPos = calculateLineHeadPosition(ev, this.$refs[this.refId])
         this.$emit('change-linehead', seekPos)
         document.addEventListener('mousemove', this.onMouseMove)
         document.addEventListener('mouseup', this.onMouseUp)
@@ -43,17 +43,17 @@
       onMouseUp (ev) {
         document.removeEventListener('mouseup', this.onMouseUp)
         document.removeEventListener('mousemove', this.onMouseMove)
-        let seekPos = calculateLineHeadPosition(ev, this.$refs[this.refId])
+        const seekPos = calculateLineHeadPosition(ev, this.$refs[this.refId])
         this.$emit('change-linehead', seekPos)
       },
       onMouseMove (ev) {
-        let seekPos = calculateLineHeadPosition(ev, this.$refs[this.refId])
+        const seekPos = calculateLineHeadPosition(ev, this.$refs[this.refId])
         this.$emit('change-linehead', seekPos)
       }
     },
     computed: {
       calculateSize () {
-        let value = this.percentage < 1 ? this.percentage * 100 : this.percentage
+        const value = this.percentage < 1 ? this.percentage * 100 : this.percentage
         return `${this.rowDirection ? 'width' : 'height'}: ${value}%`
       }
     }

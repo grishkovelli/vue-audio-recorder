@@ -29,22 +29,23 @@ npm i vue-audio-recorder --save
 
 ## AudioRecorder props
 
-| Prop                  | Type     | Description                                                     |
-| --------------------- | -------- | --------------------------------------------------------------- |
-| attempts              | Number   | Number of recording attempts                                    |
-| compact               | Boolean  | Hide the download and upload buttons                            |
-| headers               | Object   | HTTP headers                                                    |
-| time                  | Number   | Time limit for the record (minutes)                             |
-| upload-url            | String   | URL for uploading                                               |
-| start-record          | Function | Fires after click the record button                             |
-| stop-record           | Function | Fires after click the stop button or exceeding the time limit   |
-| start-upload          | Function | Fires after start uploading                                     |
-| attempts-limit        | Function | Fires after exceeding the attempts                              |
-| failed-upload         | Function | Fires after a failure uploading                                 |
-| mic-failed            | Function | Fires if your microphone doesn't work                           |
-| successful-upload     | Function | Fires after a successful uploading                              |
-| successful-upload-msg | String   | Displays the message after a successful uploading               |
-| failed-upload-msg     | String   | Displays the message after a failure uploading                  |
+| Prop                  | Type     | Description                                                              |
+| --------------------- | -------- | ------------------------------------------------------------------------ |
+| attempts              | Number   | Number of recording attempts                                             |
+| headers               | Object   | HTTP headers                                                             |
+| time                  | Number   | Time limit for the record (minutes)                                      |
+| filename              | String   | Download/Upload filename                                                 |
+| upload-url            | String   | URL for uploading                                                        |
+| show-download-button  | Boolean  | If it is true show a download button. Default: true                      |
+| show-upload-button    | Boolean  | If it is true show an upload button. Default: true                       |
+| before-upload         | Function | Callback fires before uploading                                          |
+| successful-upload     | Function | Callback fires after successful uploading                                |
+| failed-upload         | Function | Callback fires after failure uploading                                   |
+| mic-failed            | Function | Callback fires if your microphone doesn't work                           |
+| before-recording      | Function | Callback fires after click the record button                             |
+| pause-recording       | Function | Callback fires after pause recording                                     |
+| after-recording       | Function | Callback fires after click the stop button or exceeding the time limit   |
+| select-record         | Function | Callback fires after choise a record. Returns the record                 |
 
 ## AudioPlayer props
 | Prop                  | Type     | Description                                                     |
@@ -59,15 +60,25 @@ npm i vue-audio-recorder --save
     Vue.use(AudioRecorder)
 ```
 
+```js
+    methods: {
+      callback (data) {
+        console.debug(data)
+      }
+    }
+```
+
 ```html
   <audio-recorder
     upload-url="YOUR_API_URL"
     :attempts="3"
-    :headers="headers"
     :time="2"
-    :start-record="callback"
-    :stop-record="callback"
-    :start-upload="callback"
+    :headers="headers"
+    :before-recording="callback"
+    :pause-recording="callback"
+    :after-recording="callback"
+    :select-record="callback"
+    :before-upload="callback"
     :successful-upload="callback"
     :failed-upload="callback"/>
 ```

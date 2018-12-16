@@ -1,15 +1,25 @@
 <style lang="scss">
   .ar-player {
     width: 380px;
-    height: 120px;
-    border: 1px solid #E8E8E8;
-    border-radius: 24px;
+    height: unset;
+    border: 0;
+    border-radius: 0;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    background-color: #FAFAFA;
+    background-color: unset;
     font-family: 'Roboto', sans-serif;
+
+    & > .ar-player-bar {
+      border: 1px solid #E8E8E8;
+      border-radius: 24px;
+      margin: 0 0 0 5px;
+
+      & > .ar-player__progress {
+        width: 125px;
+      }
+    }
 
     &-bar {
       display: flex;
@@ -24,33 +34,6 @@
       display: flex;
       align-items: center;
       justify-content: space-around;
-    }
-
-    &--compact {
-      height: unset;
-      flex-direction: row;
-      border: 0;
-      border-radius: 0;
-      background-color: unset;
-
-      & > .ar-player-actions {
-        width: unset;
-
-        & > #download,
-        & > #upload {
-          display: none;
-        }
-      }
-
-      & > .ar-player-bar {
-        border: 1px solid #E8E8E8;
-        border-radius: 24px;
-        margin: 0 0 0 5px;
-
-        & > .ar-player__progress {
-          width: 125px;
-        }
-      }
     }
 
     &__progress {
@@ -81,27 +64,14 @@
 </style>
 
 <template>
-  <div class="ar-player" :class="{'ar-player--compact': compact}">
-
+  <div class="ar-player">
     <div class="ar-player-actions">
-      <icon-button
-        id="download"
-        class="ar-icon ar-icon__sm"
-        name="download"
-        @click.native="decorator(download)"/>
-
       <icon-button
         id="play"
         class="ar-icon ar-icon__lg ar-player__play"
         :name="playBtnIcon"
         :class="{'ar-player__play--active': isPlaying}"
-        @click.native="decorator(playback)"/>
-
-      <uploader
-        id="upload"
-        class="ar-icon ar-icon__sm"
-        :record="record"
-        :options="uploaderOptions"/>
+        @click.native="playback"/>
     </div>
 
     <div class="ar-player-bar">
@@ -122,16 +92,14 @@
 <script>
   import IconButton    from './icon-button'
   import LineControl   from './line-control'
-  import Uploader      from './uploader'
   import VolumeControl from './volume-control'
   import { convertTimeMMSS } from '@/lib/utils'
 
   export default {
     props: {
-      src     : { type: String },
-      record  : { type: Object },
-      compact : { type: Boolean, default: true },
-      uploaderOptions : { type: Object, default: () => new Object }
+      src      : { type: String },
+      record   : { type: Object },
+      filename : { type: String }
     },
     data () {
       return {
@@ -144,7 +112,6 @@
     components: {
       IconButton,
       LineControl,
-      Uploader,
       VolumeControl
     },
     mounted: function() {
@@ -167,7 +134,7 @@
     },
     computed: {
       audioSource () {
-        let url = this.src || this.record.url
+        const url = this.src || this.record.url
         if (url) {
           return url
         } else {
@@ -183,6 +150,10 @@
     },
     methods: {
       playback () {
+        if (!this.audioSource) {
+          return
+        }
+
         if (this.isPlaying) {
           this.player.pause()
         } else {
@@ -190,18 +161,6 @@
         }
 
         this.isPlaying = !this.isPlaying
-      },
-      download () {
-        let link = document.createElement('a')
-        link.href = this.record.url
-        link.download = 'record.wav'
-        link.click()
-      },
-      decorator (func) {
-        if (!this.audioSource) {
-          return
-        }
-        func()
       },
       _resetProgress () {
         if (this.isPlaying) {

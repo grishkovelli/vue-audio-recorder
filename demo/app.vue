@@ -14,9 +14,11 @@
       :attempts="3"
       :time="2"
       :headers="headers"
-      :start-record="callback"
-      :stop-record="callback"
-      :start-upload="callback"
+      :before-recording="callback"
+      :pause-recording="callback"
+      :after-recording="callback"
+      :select-record="callback"
+      :before-upload="callback"
       :successful-upload="callback"
       :failed-upload="callback"/>
 
