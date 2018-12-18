@@ -1,7 +1,7 @@
 {
   "name": "vue-audio-recorder",
   "description": "Audio recorder for Vue.js. It allows to create, play, download and store records on a server",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "author": "Gennady Grishkovtsov <grishkovelli@gmail.com>",
   "license": "MIT",
   "scripts": {
