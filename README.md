@@ -14,6 +14,7 @@
 - Records limit
 - A lot of callbacks
 - Individual an audio player
+- MP3 support
 
 ### Tested in (desktop)
 
