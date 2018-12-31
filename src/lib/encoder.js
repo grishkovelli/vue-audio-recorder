@@ -2,8 +2,8 @@ import { Mp3Encoder } from 'lamejs'
 
 export default class {
   constructor(config) {
-    this.bitRate    = config.bitRate || 128
-    this.sampleRate = config.sampleRate || 44100
+    this.bitRate    = config.bitRate
+    this.sampleRate = config.sampleRate
     this.dataBuffer = []
     this.encoder    = new Mp3Encoder(1, this.sampleRate, this.bitRate)
   }

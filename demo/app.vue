@@ -20,7 +20,8 @@
       :select-record="callback"
       :before-upload="callback"
       :successful-upload="callback"
-      :failed-upload="callback"/>
+      :failed-upload="callback"
+      :bit-rate="192"/>
 
     <audio-player :src="mp3" v-if="!showRecorder"/>
   </div>

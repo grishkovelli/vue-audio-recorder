@@ -260,6 +260,9 @@
       attempts : { type: Number },
       time     : { type: Number },
 
+      bitRate    : { type: Number, default: 128   },
+      sampleRate : { type: Number, default: 44100 },
+
       showDownloadButton : { type: Boolean, default: true },
       showUploadButton   : { type: Boolean, default: true },
 
@@ -343,7 +346,9 @@
           beforeRecording : this.beforeRecording,
           afterRecording  : this.afterRecording,
           pauseRecording  : this.pauseRecording,
-          micFailed       : this.micFailed
+          micFailed       : this.micFailed,
+          bitRate         : this.bitRate,
+          sampleRate      : this.sampleRate
         })
       }
     },

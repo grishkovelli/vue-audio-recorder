@@ -7,6 +7,8 @@ export default class {
     this.pauseRecording  = options.pauseRecording
     this.afterRecording  = options.afterRecording
     this.micFailed       = options.micFailed
+    this.bitRate         = options.bitRate
+    this.sampleRate      = options.sampleRate
 
     this.bufferSize = 4096
     this.records    = []
@@ -37,7 +39,10 @@ export default class {
              .catch(this._micError.bind(this))
     this.isPause = false
     this.isRecording = true
-    this.lameEncoder = new Encoder({})
+    this.lameEncoder = new Encoder({
+      bitRate    : this.bitRate,
+      sampleRate : this.sampleRate
+    })
   }
 
   stop () {

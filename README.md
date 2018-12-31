@@ -35,6 +35,8 @@ npm i vue-audio-recorder --save
 | attempts              | Number   | Number of recording attempts                                             |
 | headers               | Object   | HTTP headers                                                             |
 | time                  | Number   | Time limit for the record (minutes)                                      |
+| bit-rate              | Number   | Default: 128                                                             |
+| sample-rate           | Number   | Default: 44100                                                           |
 | filename              | String   | Download/Upload filename                                                 |
 | upload-url            | String   | URL for uploading                                                        |
 | show-download-button  | Boolean  | If it is true show a download button. Default: true                      |
