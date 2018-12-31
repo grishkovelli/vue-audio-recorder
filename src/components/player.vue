@@ -56,6 +56,10 @@
       &--active {
         fill: white !important;
         background-color: #05CBCD !important;
+
+        &:hover {
+          fill: #505050 !important;
+        }
       }
     }
   }
