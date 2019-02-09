@@ -103,6 +103,12 @@ npm run dev
 npm run build
 ```
 
+## TODO
+
+- Clear record list
+- Return WAV format
+- Responsive design
+
 ## Authors
 
 [Gennady Grishkovtsov](https://www.linkedin.com/in/grishkovtsov/) - Developer
