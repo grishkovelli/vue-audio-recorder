@@ -39,7 +39,7 @@ export default class {
              .catch(this._micError.bind(this))
     this.isPause = false
     this.isRecording = true
-    this.lameEncoder = new Encoder({
+    if (!this.lameEncoder) this.lameEncoder = new Encoder({
       bitRate    : this.bitRate,
       sampleRate : this.sampleRate
     })
