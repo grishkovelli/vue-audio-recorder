@@ -7,8 +7,11 @@ export default class {
     this.pauseRecording  = options.pauseRecording
     this.afterRecording  = options.afterRecording
     this.micFailed       = options.micFailed
-    this.bitRate         = options.bitRate
-    this.sampleRate      = options.sampleRate
+
+    this.lameOptions = {
+      bitRate    : options.bitRate,
+      sampleRate : options.sampleRate
+    }
 
     this.bufferSize = 4096
     this.records    = []
@@ -37,12 +40,13 @@ export default class {
              .getUserMedia(constraints)
              .then(this._micCaptured.bind(this))
              .catch(this._micError.bind(this))
-    this.isPause = false
+
+    this.isPause     = false
     this.isRecording = true
-    if (!this.lameEncoder) this.lameEncoder = new Encoder({
-      bitRate    : this.bitRate,
-      sampleRate : this.sampleRate
-    })
+
+    if (!this.lameEncoder) {
+      this.lameEncoder = new Encoder(this.lameOptions)
+    }
   }
 
   stop () {
@@ -68,7 +72,6 @@ export default class {
     this.stream.getTracks().forEach((track) => track.stop())
     this.input.disconnect()
     this.processor.disconnect()
-    this.context.close()
 
     this._duration = this.duration
     this.isPause = true
