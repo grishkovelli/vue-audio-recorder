@@ -14,7 +14,7 @@
 - Records limit
 - A lot of callbacks
 - Individual an audio player
-- MP3 support
+- MP3/WAV support
 
 ### Tested in (desktop)
 
@@ -35,9 +35,10 @@ npm i vue-audio-recorder --save
 | attempts              | Number   | Number of recording attempts                                             |
 | headers               | Object   | HTTP headers                                                             |
 | time                  | Number   | Time limit for the record (minutes)                                      |
-| bit-rate              | Number   | Default: 128                                                             |
+| bit-rate              | Number   | Default: 128 (only for MP3)                                              |
 | sample-rate           | Number   | Default: 44100                                                           |
 | filename              | String   | Download/Upload filename                                                 |
+| format                | String   | WAV/MP3. Default: mp3                                                    |
 | upload-url            | String   | URL for uploading                                                        |
 | show-download-button  | Boolean  | If it is true show a download button. Default: true                      |
 | show-upload-button    | Boolean  | If it is true show an upload button. Default: true                       |
@@ -106,7 +107,6 @@ npm run build
 ## TODO
 
 - Clear record list
-- Return WAV format
 - Responsive design
 
 ## Authors

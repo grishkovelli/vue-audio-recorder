@@ -27,9 +27,9 @@ export default class {
     this.dataBuffer = []
 
     return {
-      id    : Date.now(),
-      blob  : blob,
-      url   : URL.createObjectURL(blob)
+      id   : Date.now(),
+      blob : blob,
+      url  : URL.createObjectURL(blob)
     }
   }
 

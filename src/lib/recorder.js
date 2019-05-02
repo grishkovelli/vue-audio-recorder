@@ -1,4 +1,5 @@
-import Encoder from './encoder'
+import Mp3Encoder from './mp3-encoder'
+import WavEncoder from './wav-encoder'
 import { convertTimeMMSS } from './utils'
 
 export default class {
@@ -7,8 +8,9 @@ export default class {
     this.pauseRecording  = options.pauseRecording
     this.afterRecording  = options.afterRecording
     this.micFailed       = options.micFailed
+    this.format          = options.format
 
-    this.lameOptions = {
+    this.encoderOptions = {
       bitRate    : options.bitRate,
       sampleRate : options.sampleRate
     }
@@ -21,6 +23,8 @@ export default class {
 
     this.duration = 0
     this.volume   = 0
+
+    this.wavSamples = []
 
     this._duration = 0
   }
@@ -44,8 +48,8 @@ export default class {
     this.isPause     = false
     this.isRecording = true
 
-    if (!this.lameEncoder) {
-      this.lameEncoder = new Encoder(this.lameOptions)
+    if (this._isMp3() && !this.lameEncoder) {
+      this.lameEncoder = new Mp3Encoder(this.encoderOptions)
     }
   }
 
@@ -55,7 +59,20 @@ export default class {
     this.processor.disconnect()
     this.context.close()
 
-    const record = this.lameEncoder.finish()
+    let record = null
+
+    if (this._isMp3()) {
+      record = this.lameEncoder.finish()
+    } else {
+      let wavEncoder = new WavEncoder({
+        bufferSize : this.bufferSize,
+        sampleRate : this.encoderOptions.sampleRate,
+        samples    : this.wavSamples
+      })
+      record = wavEncoder.finish()
+      this.wavSamples = []
+    }
+
     record.duration = convertTimeMMSS(this.duration)
     this.records.push(record)
 
@@ -98,7 +115,11 @@ export default class {
       const sample = ev.inputBuffer.getChannelData(0)
       let sum = 0.0
 
-      this.lameEncoder.encode(sample)
+      if (this._isMp3()) {
+        this.lameEncoder.encode(sample)
+      } else {
+        this.wavSamples.push(new Float32Array(sample))
+      }
 
       for (let i = 0; i < sample.length; ++i) {
         sum += sample[i] * sample[i]
@@ -114,5 +135,9 @@ export default class {
 
   _micError (error) {
     this.micFailed && this.micFailed(error)
+  }
+
+  _isMp3 () {
+    return this.format.toLowerCase() === 'mp3'
   }
 }

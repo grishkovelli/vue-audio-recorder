@@ -348,7 +348,8 @@
           pauseRecording  : this.pauseRecording,
           micFailed       : this.micFailed,
           bitRate         : this.bitRate,
-          sampleRate      : this.sampleRate
+          sampleRate      : this.sampleRate,
+          format          : this.format
         })
       }
     },
