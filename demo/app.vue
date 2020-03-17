@@ -2,12 +2,21 @@
   .toggle {
     cursor: pointer;
     margin: 20px;
+    border-radius: 50px;
+    padding: 5px 20px;
+    background-color: white;
+    font-weight: bold;
+    border: 1px solid #05CBCD;
+    color: #747474;
+    &:hover {
+      background-color: #05CBCD;
+    }
   }
 </style>
 
 <template>
   <div class="row">
-    <div class="toggle" @click="toggle">TOGGLE</div>
+    <button class="toggle" @click="toggle">TOGGLE</button>
 
     <audio-recorder v-if="showRecorder"
       upload-url="some url"

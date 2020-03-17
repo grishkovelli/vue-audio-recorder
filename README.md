@@ -5,6 +5,7 @@
 #### [Live demo](https://jsfiddle.net/grishkovelli/rb1anxyj/)
 
 ![](https://raw.githubusercontent.com/grishkovelli/vue-audio-recorder/master/screenshot.png)
+![](https://raw.githubusercontent.com/grishkovelli/vue-audio-recorder/master/minimal.png)
 
 ### Features
 
@@ -50,6 +51,7 @@ npm i vue-audio-recorder --save
 | pause-recording       | Function | Callback fires after pause recording                                     |
 | after-recording       | Function | Callback fires after click the stop button or exceeding the time limit   |
 | select-record         | Function | Callback fires after choise a record. Returns the record                 |
+| mode                  | String   | **[New]** default/minimal. Default: default                                        |
 
 ## AudioPlayer props
 | Prop                  | Type     | Description                                                     |
@@ -114,3 +116,7 @@ npm run build
 [Gennady Grishkovtsov](https://www.linkedin.com/in/grishkovtsov/) - Developer
 
 [Olga Zimina](https://www.behance.net/zimin4ik) - UIX Designer
+
+## Contributors
+
+[Jonathan Arias](https://github.com/jonalxh) - Developer
