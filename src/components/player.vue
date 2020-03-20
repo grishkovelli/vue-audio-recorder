@@ -57,13 +57,30 @@
         fill: white !important;
         background-color: #05CBCD !important;
 
-        &:hover {
+        &:not(.disabled):hover{
           fill: #505050 !important;
         }
       }
     }
   }
 
+  div.disabled {
+    color: grey;
+    border-color: white;
+    // pointer-events: none;
+    opacity: .6;
+    cursor: not-allowed !important;
+    user-select: none;
+    &:hover {
+      cursor: not-allowed !important;
+    }
+  }
+
+  @media (min-device-width: 320px) and (max-device-width: 700px) {
+    .ar-player {
+      width: 85vw;
+    }
+  }
   @import '../scss/icons';
 </style>
 
@@ -74,7 +91,7 @@
         id="play"
         class="ar-icon ar-icon__lg ar-player__play"
         :name="playBtnIcon"
-        :class="{'ar-player__play--active': isPlaying}"
+        :class="{'ar-player__play--active': isPlaying, 'disabled': disablePlayButton}"
         @click.native="playback"/>
     </div>
 
@@ -86,7 +103,7 @@
         :percentage="progress"
         @change-linehead="_onUpdateProgress"/>
       <div class="ar-player__time">{{duration}}</div>
-      <volume-control @change-volume="_onChangeVolume"/>
+      <volume-control @change-volume="_onChangeVolume" :class="{'disabled': disablePlayButton}"/>
     </div>
 
     <audio :id="playerUniqId" :src="audioSource"></audio>
@@ -110,7 +127,8 @@
         isPlaying  : false,
         duration   : convertTimeMMSS(0),
         playedTime : convertTimeMMSS(0),
-        progress   : 0
+        progress   : 0,
+        disablePlayButton : true
       }
     },
     components: {
@@ -140,8 +158,10 @@
       audioSource () {
         const url = this.src || this.record.url
         if (url) {
+          this.disablePlayButton = false
           return url
         } else {
+          this.disablePlayButton = true
           this._resetProgress()
         }
       },

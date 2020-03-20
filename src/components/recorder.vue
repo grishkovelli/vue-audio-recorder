@@ -178,6 +178,12 @@
     }
   }
 
+  @media (min-device-width: 320px) and (max-device-width: 700px) {
+    .ar {
+      width: 90vw;
+    }
+  }
+
   @import '../scss/icons';
 </style>
 
@@ -240,7 +246,7 @@
         </div>
       </div>
 
-      <audio-player :record="selected"/>
+      <audio-player :record="selected" :class="{ 'disabled' : selected === {} || selected === undefined }"/>
     </div>
   </div>
 </template>

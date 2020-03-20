@@ -138,6 +138,7 @@ export default class {
   }
 
   _micError (error) {
+    // TODO: Show permission error when not allowed
     this.stop()
     this.micFailed && this.micFailed(error)
   }
