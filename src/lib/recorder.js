@@ -101,7 +101,7 @@ export default class {
   }
 
   lastRecord () {
-    return this.records.slice(-1)
+    return this.records.slice(-1).pop()
   }
 
   _micCaptured (stream) {
