@@ -59,4 +59,20 @@
     line-height: 45px;
     box-shadow: 0 2px 5px 1px rgba(158,158,158,0.5);
   }
+
+  @media (min-device-width: 320px) and (max-device-width: 700px) {
+    .ar-icon {
+      &__lg {
+        width: 35px;
+        height: 35px;
+      }
+    }
+    audio::-webkit-media-controls-mute-button {
+      display: none !important;
+    }
+  
+    audio::-webkit-media-controls-volume-slider {
+      display: none !important;
+    }
+  }
 }

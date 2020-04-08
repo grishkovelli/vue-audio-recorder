@@ -23,6 +23,11 @@
       margin-right: 3px;
     }
   }
+  @media (min-device-width: 320px) and (max-device-width: 700px) {
+    .ar-volume {
+      display: none;
+    }
+  }
 </style>
 
 <template>

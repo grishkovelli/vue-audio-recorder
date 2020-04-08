@@ -54,35 +54,39 @@ export default class {
   }
 
   stop () {
-    this.stream.getTracks().forEach((track) => track.stop())
-    this.input.disconnect()
-    this.processor.disconnect()
-    this.context.close()
+    if (this.stream){
+      this.stream.getTracks().forEach((track) => track.stop())
+      this.input.disconnect()
+      this.processor.disconnect()
+      this.context.close()
 
-    let record = null
+      let record = null
 
-    if (this._isMp3()) {
-      record = this.lameEncoder.finish()
+      if (this._isMp3()) {
+        record = this.lameEncoder.finish()
+      } else {
+        let wavEncoder = new WavEncoder({
+          bufferSize : this.bufferSize,
+          sampleRate : this.encoderOptions.sampleRate,
+          samples    : this.wavSamples
+        })
+        record = wavEncoder.finish()
+        this.wavSamples = []
+      }
+
+      record.duration = convertTimeMMSS(this.duration)
+      this.records.push(record)
+
+      this._duration = 0
+      this.duration  = 0
+
+      this.isPause     = false
+      this.isRecording = false
+
+      this.afterRecording && this.afterRecording(record)
     } else {
-      let wavEncoder = new WavEncoder({
-        bufferSize : this.bufferSize,
-        sampleRate : this.encoderOptions.sampleRate,
-        samples    : this.wavSamples
-      })
-      record = wavEncoder.finish()
-      this.wavSamples = []
+      this.isRecording = false
     }
-
-    record.duration = convertTimeMMSS(this.duration)
-    this.records.push(record)
-
-    this._duration = 0
-    this.duration  = 0
-
-    this.isPause     = false
-    this.isRecording = false
-
-    this.afterRecording && this.afterRecording(record)
   }
 
   pause () {
@@ -134,6 +138,8 @@ export default class {
   }
 
   _micError (error) {
+    // TODO: Show permission error when not allowed
+    this.stop()
     this.micFailed && this.micFailed(error)
   }
 
