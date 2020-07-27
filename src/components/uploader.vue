@@ -32,7 +32,7 @@
         const headers = Object.assign(this.headers, {})
         headers['Content-Type'] = `multipart/form-data; boundary=${data._boundary}`
 
-        this.$http.post(this.uploadUrl, data, { headers: headers }).then(resp => {
+        this.$axios.post(this.uploadUrl, data, { headers: headers }).then(resp => {
           this.$eventBus.$emit('end-upload', { status: 'success', response: resp })
         }).catch(error => {
           this.$eventBus.$emit('end-upload', { status: 'fail', response: error })
