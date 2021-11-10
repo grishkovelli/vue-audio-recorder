@@ -261,7 +261,7 @@
       time     : { type: Number },
 
       bitRate    : { type: Number, default: 128   },
-      sampleRate : { type: Number, default: 44100 },
+      sampleRate : { type: Number, default: (new (window.AudioContext || window.webkitAudioContext)()).sampleRate },
 
       showDownloadButton : { type: Boolean, default: true },
       showUploadButton   : { type: Boolean, default: true },
