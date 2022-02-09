@@ -273,7 +273,8 @@
       failedUpload     : { type: Function },
       beforeUpload     : { type: Function },
       successfulUpload : { type: Function },
-      selectRecord     : { type: Function }
+      selectRecord     : { type: Function },
+      recordRemoved    : { type: Function }
     },
     data () {
       return {
@@ -333,6 +334,7 @@
         this.recordList.splice(idx, 1)
         this.$set(this.selected, 'url', null)
         this.$eventBus.$emit('remove-record')
+        this.recordRemoved && this.recordRemoved(idx)
       },
       choiceRecord (record) {
         if (this.selected === record) {

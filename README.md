@@ -50,6 +50,7 @@ npm i vue-audio-recorder --save
 | pause-recording       | Function | Callback fires after pause recording                                     |
 | after-recording       | Function | Callback fires after click the stop button or exceeding the time limit   |
 | select-record         | Function | Callback fires after choise a record. Returns the record                 |
+| record-removed        | Function | Callback fires after removing a record. Returns the record index         |
 
 ## AudioPlayer props
 | Prop                  | Type     | Description                                                     |
@@ -82,6 +83,7 @@ npm i vue-audio-recorder --save
     :pause-recording="callback"
     :after-recording="callback"
     :select-record="callback"
+    :record-removed="callback"
     :before-upload="callback"
     :successful-upload="callback"
     :failed-upload="callback"/>
